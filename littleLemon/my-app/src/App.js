@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import Book from "./components/Book";
 import About from "./components/About";
 import React from "react";
+import Menu from "./components/Menu";
 import "./App.css"; // Assuming you have some styles in App.css
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<Book />} />
           <Route path="/about" element={<About />} />
+          <Route path="/menu" element={<Menu />} />
           <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
       </div>

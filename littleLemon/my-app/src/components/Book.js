@@ -1,7 +1,20 @@
 import * as React from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-
+import MyTextField from "./MyTextField";
+import { TextField, Button, Grid, Box } from "@mui/material";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimeClock } from "@mui/x-date-pickers/TimeClock";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MyError from "./MyError";
+import ReserveNowButton from "./ReserveNowButton";
+import Stack from "@mui/material/Stack";
 export default function Book() {
   return (
     <div className="book-container">
@@ -11,8 +24,8 @@ export default function Book() {
           name: "",
           email: "",
           phoneNumber: "",
-          date: "",
-          time: "",
+          date: null,
+          time: null,
           numberOfGuests: "",
         }}
         validationSchema={Yup.object({
@@ -25,49 +38,122 @@ export default function Book() {
           phoneNumber: Yup.string()
             .matches(/^(\+?\d{1,3}[- ]?)?\d{10}$/, "Phone number is not valid")
             .required("Phone number is required"),
-          date: Yup.date().required("Date is required").nullable(),
+          date: Yup.date().nullable().required("Date is required"),
           time: Yup.string().required("Time is required"),
           numberOfGuests: Yup.number()
             .min(1, "At least one guest is required")
             .max(10, "Maximum 20 guests allowed")
             .required("Number of guests is required"),
         })}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => alert("Booking details submitted successfully!")}
       >
-        {() => (
-          <Form className="book-form:">
-            <label htmlFor="name">Name</label>
-            <Field name="name" type="text" className="book-input" />
-            <ErrorMessage name="name" component="div" className="error" />
-            <label htmlFor="email">Email</label>
-            <Field name="email" type="email" className="book-input" />
-            <ErrorMessage name="email" component="div" className="error" />
-            <label htmlFor="phoneNumber">Phone Number</label>
-            <Field name="phoneNumber" type="text" className="book-input" />
-            <ErrorMessage
-              name="phoneNumber"
-              component="div"
-              className="error"
-            />
-            <label htmlFor="date">Date </label>
-            <Field name="date" type="date" className="book-input" />
-            <ErrorMessage name="date" component="div" className="error" />
-            <label htmlFor="time">Time</label>
-            <Field name="time" type="time" className="book-input" />
-            <ErrorMessage name="time" component="div" className="error" />
-            <label htmlFor="numberOfGuests">number of guests</label>
-            <Field
-              name="numberOfGuests"
-              type="number"
-              min={1}
-              max={10}
-              classNumber="book-input"
-            />
-            <ErrorMessage
-              name="numberOfGuests"
-              component="div"
-              className="error"
-            />
+        {({ values, setFieldValue }) => (
+          <Form className="book-form">
+            <div className="book-inputAndError">
+              <Field name="name" as={MyTextField} label="Name: " />
+              <ErrorMessage name="name" component={MyError} />
+            </div>
+
+            <div className="book-inputAndError">
+              <Field
+                name="email"
+                as={MyTextField}
+                type="email"
+                label="Email Address: "
+              />
+              <ErrorMessage name="email" component={MyError} />
+            </div>
+
+            <div className="book-inputAndError">
+              <Field
+                name="phoneNumber"
+                type="text"
+                as={MyTextField}
+                label="Phone Number: "
+              />
+              <ErrorMessage name="phoneNumber" component={MyError} />
+            </div>
+
+            <div className="book-inputAndError">
+              <Field name="date">
+                {({ field, form }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={["DatePicker"]}>
+                      <DatePicker
+                        value={field.value}
+                        onChange={(newValue) => {
+                          form.setFieldValue("date", newValue);
+                        }}
+                        slotProps={{
+                          textField: {
+                            label: "Date:",
+                            variant: "filled",
+                            color: "black",
+                          },
+                        }}
+                        sx={{
+                          width: "50%",
+                          backgroundColor: "#fff",
+                          borderRadius: "5px",
+                          "& .MuiFilledInput-root:hover, & .MuiFilledInput-root.Mui-focused":
+                            {
+                              backgroundColor: "#F4CE14",
+                            },
+                          "& .MuiFilledInput-input": {
+                            color: "#000",
+                          },
+                        }}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+                )}
+              </Field>
+              <ErrorMessage name="date" component={MyError} />
+            </div>
+            <div className="book-inputAndError">
+              <Field name="time">
+                {({ field, form }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimeClock
+                      value={field.value}
+                      onChange={(newValue) => {
+                        form.setFieldValue("time", newValue);
+                      }}
+                    />
+                  </LocalizationProvider>
+                )}
+              </Field>
+            </div>
+            <ErrorMessage name="time" component={MyError} />
+
+            <div className="book-inputAndError">
+              <Field
+                name="numberOfGuests"
+                type="number"
+                label="Number of Guests: "
+                min={1}
+                max={10}
+                as={MyTextField}
+                sx={{ width: "10%" }}
+              />
+              <ErrorMessage name="numberOfGuests" component={MyError} />
+            </div>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                backgroundColor: "#ffffff",
+                width: "30%",
+                color: "#000",
+                fontSize: "20px",
+                "&:hover": {
+                  backgroundColor: "#F4CE14",
+                  color: "#000",
+                },
+              }}
+            >
+              Book Now
+            </Button>
           </Form>
         )}
       </Formik>
